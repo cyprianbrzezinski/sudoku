@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Sudoku ',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
       home: const SudokuGame(),
     );
@@ -33,12 +33,18 @@ class _SudokuGameState extends State<SudokuGame> {
     (_) => List.filled(9, 0),
   );
 
-  
   List<List<TextEditingController>> controllers = List.generate(
     9,
     (_) => List.generate(9, (_) => TextEditingController()),
   );
 
+  void setTextColor(Color red) {
+    for (var i = 0; i < controllers.length; i++) {
+      for (var j = 0; j < controllers[i].length; j++) {
+        controllers[i][j].text = toString();
+      }
+    }
+  }
 
   void generateBoard() {
     for (int row = 0; row < 9; row++) {
@@ -48,8 +54,6 @@ class _SudokuGameState extends State<SudokuGame> {
         controllers[row][col].text = value.toString();
       }
     }
-
-
   }
 
   bool solveSudoku() {
@@ -128,69 +132,105 @@ class _SudokuGameState extends State<SudokuGame> {
     setState(() {});
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.yellow,
-      appBar: AppBar(
-        title: const Text('Sudoku Solve'),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-        
-            const SizedBox(height: 16.0),
-            GridView.count(
-              crossAxisCount: 9,
-              shrinkWrap: true,
-              children: List.generate(81, (index) {
-                final row = index ~/ 9;
-                final col = index % 9;
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: TextFormField(
-                      controller: controllers[row][col],
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        // Aktualizuj wartość w tablicy planszy
-                        board[row][col] = int.tryParse(value) ?? 0;
-                      },
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.blueGrey[300],
+    appBar: AppBar(
+      title: const Text('Sudoku Solve'),
+      centerTitle: true,
+    ),
+    body: Container(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView(
+        children: [
+          const SizedBox(height: 16.0),
+          GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 2.0,
+              crossAxisSpacing: 2.0,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              final rowStart = (index ~/ 3) * 3;
+              final colStart = (index % 3) * 3;
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 2.0,
+                  crossAxisSpacing: 2.0,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  final row = rowStart + (index ~/ 3);
+                  final col = colStart + (index % 3);
+
+                  // Utwórz kontroler tekstowy dla każdego pola
+                  final controller = controllers[row][col];
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 0.5,
                       ),
-                      style: const TextStyle(
-                        fontSize: 20.0,
+                    ),
+                    child: Center(
+                      child: TextFormField(
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          int enteredValue = int.tryParse(value) ?? 0;
+
+                          if (enteredValue >= 1 && enteredValue <= 9) {
+                            // Aktualizuj wartość w tablicy planszy
+                            setState(() {
+                              board[row][col] = enteredValue;
+                            });
+                          } else {
+                            // Zeruj wartość w tablicy planszy, jeśli wartość jest niepoprawna
+                            setState(() {
+                              board[row][col] = 0;
+                            });
+                          }
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: (board[row][col] >= 1 && board[row][col] <= 9)
+                              ? Colors.yellowAccent // Ustaw kolor tekstu na czerwony, jeśli wartość jest z zakresu od 1 do 9
+                              : Colors.red, // W przeciwnym razie ustaw domyślny kolor tekstu (czarny)
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                solveSudoku();
-              },
-              child: const Text('Solve Sudoku'),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                resetBoard();
-              },
-              child: const Text('Reset'),
-            ),
-          ],
-        ),
+                  );
+                },
+                itemCount: 9,
+              );
+            },
+            itemCount: 9,
+          ),
+          const SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () {
+              solveSudoku();
+            },
+            child: const Text('Solve Sudoku'),
+          ),
+          const SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () {
+              resetBoard();
+            },
+            child: const Text('Reset'),
+          ),
+        ],
       ),
-    );
-  }
-}
+    ),
+  );
+}}
