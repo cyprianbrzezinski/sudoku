@@ -35,7 +35,7 @@ class _SudokuGameState extends State<SudokuGame> {
     (_) => List.generate(9, (_) => TextEditingController()),
   );
 
-  void setTextColor(Color red) {
+  void setTextColor(Color black) {
     for (var i = 0; i < controllers.length; i++) {
       for (var j = 0; j < controllers[i].length; j++) {
         controllers[i][j].text = toString();
@@ -210,6 +210,7 @@ class _SudokuGameState extends State<SudokuGame> {
                       ),
                     );
                   },
+                  
                   itemCount: 9,
                 );
               },
