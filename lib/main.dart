@@ -134,8 +134,7 @@ class _SudokuGameState extends State<SudokuGame> {
     return Scaffold(
       backgroundColor: Colors.deepPurple[600],
       appBar: AppBar(
-          backgroundColor:Colors.blueGrey.shade700,
-                
+        backgroundColor: Colors.blueGrey.shade700,
         title: const Text('Sudoku Solve'),
         centerTitle: true,
       ),
@@ -148,8 +147,8 @@ class _SudokuGameState extends State<SudokuGame> {
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
-                mainAxisSpacing: 2.0,
-                crossAxisSpacing: 2.0,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
               ),
               itemBuilder: (BuildContext context, int index) {
                 final rowStart = (index ~/ 3) * 3;
@@ -200,17 +199,15 @@ class _SudokuGameState extends State<SudokuGame> {
                             border: InputBorder.none,
                           ),
                           style: TextStyle(
-                            fontSize: 20.0,
-                            color:
-                                (board[row][col] >= 1 && board[row][col] <= 9)
-                                    ? Colors.yellowAccent
-                                    :Colors.redAccent
-                          ),
+                              fontSize: 20.0,
+                              color:
+                                  (board[row][col] >= 1 && board[row][col] <= 9)
+                                      ? Colors.yellowAccent
+                                      : Colors.redAccent),
                         ),
                       ),
                     );
                   },
-                  
                   itemCount: 9,
                 );
               },
@@ -223,7 +220,7 @@ class _SudokuGameState extends State<SudokuGame> {
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                 Colors.blueGrey.shade700,
+                  Colors.blueGrey.shade700,
                 ),
               ),
               child: const Text('Solve Sudoku'),
@@ -235,7 +232,7 @@ class _SudokuGameState extends State<SudokuGame> {
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                 Colors.blueGrey.shade700,
+                  Colors.blueGrey.shade700,
                 ),
               ),
               child: const Text('Reset'),
