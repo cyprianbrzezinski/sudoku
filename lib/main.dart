@@ -35,24 +35,6 @@ class _SudokuGameState extends State<SudokuGame> {
     (_) => List.generate(9, (_) => TextEditingController()),
   );
 
-  void setTextColor(Color black) {
-    for (var i = 0; i < controllers.length; i++) {
-      for (var j = 0; j < controllers[i].length; j++) {
-        controllers[i][j].text = toString();
-      }
-    }
-  }
-
-  void generateBoard() {
-    for (int row = 0; row < 9; row++) {
-      for (int col = 0; col < 9; col++) {
-        int value = (row * 3 + row ~/ 3 + col) % 9 + 1;
-        board[row][col] = value;
-        controllers[row][col].text = value.toString();
-      }
-    }
-  }
-
   bool solveSudoku() {
     return solve(0, 0);
   }
@@ -68,6 +50,32 @@ class _SudokuGameState extends State<SudokuGame> {
       } else {
         return solve(row, col + 1);
       }
+    }
+
+    bool isValid(int row, int col, int num) {
+      for (int i = 0; i < 9; i++) {
+        if (board[row][i] == num) {
+          return false;
+        }
+      }
+
+      for (int i = 0; i < 9; i++) {
+        if (board[i][col] == num) {
+          return false;
+        }
+      }
+
+      int subgridRow = row - row % 3;
+      int subgridCol = col - col % 3;
+      for (int i = subgridRow; i < subgridRow + 3; i++) {
+        for (int j = subgridCol; j < subgridCol + 3; j++) {
+          if (board[i][j] == num) {
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
 
     for (int num = 1; num <= 9; num++) {
@@ -92,32 +100,6 @@ class _SudokuGameState extends State<SudokuGame> {
     return false;
   }
 
-  bool isValid(int row, int col, int num) {
-    for (int i = 0; i < 9; i++) {
-      if (board[row][i] == num) {
-        return false;
-      }
-    }
-
-    for (int i = 0; i < 9; i++) {
-      if (board[i][col] == num) {
-        return false;
-      }
-    }
-
-    int subgridRow = row - row % 3;
-    int subgridCol = col - col % 3;
-    for (int i = subgridRow; i < subgridRow + 3; i++) {
-      for (int j = subgridCol; j < subgridCol + 3; j++) {
-        if (board[i][j] == num) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
   void resetBoard() {
     for (int row = 0; row < 9; row++) {
       for (int col = 0; col < 9; col++) {
@@ -125,8 +107,6 @@ class _SudokuGameState extends State<SudokuGame> {
         controllers[row][col].text = '';
       }
     }
-
-    setState(() {});
   }
 
   @override
@@ -187,6 +167,7 @@ class _SudokuGameState extends State<SudokuGame> {
                               // Aktualizuj wartość w tablicy planszy
                               setState(() {
                                 board[row][col] = enteredValue;
+                                Colors.black;
                               });
                             } else {
                               // Zeruj wartość w tablicy planszy, jeśli wartość jest niepoprawna
@@ -203,7 +184,7 @@ class _SudokuGameState extends State<SudokuGame> {
                               color:
                                   (board[row][col] >= 1 && board[row][col] <= 9)
                                       ? Colors.yellowAccent
-                                      : Colors.redAccent),
+                                      : Colors.orange),
                         ),
                       ),
                     );
